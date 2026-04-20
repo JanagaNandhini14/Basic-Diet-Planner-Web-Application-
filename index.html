@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Basic Diet Planner App</title>
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #dff6dd, #b8e4c9);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 850px;
+      background: #ffffff;
+      border-radius: 18px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      overflow: hidden;
+    }
+
+    .header {
+      background: #2e8b57;
+      color: white;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .header h1 {
+      margin-bottom: 8px;
+    }
+
+    .content {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      padding: 25px;
+    }
+
+    .form-section, .result-section {
+      background: #f8fff8;
+      border-radius: 12px;
+      padding: 20px;
+      border: 1px solid #d8efd8;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+      color: #2f4f2f;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #b7d8b7;
+      border-radius: 8px;
+      outline: none;
+      font-size: 15px;
+    }
+
+    input:focus, select:focus {
+      border-color: #2e8b57;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      background: #2e8b57;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    button:hover {
+      background: #256f46;
+    }
+
+    .result-section h2 {
+      color: #2e8b57;
+      margin-bottom: 14px;
+    }
+
+    .result-box {
+      margin-top: 12px;
+      padding: 12px;
+      background: #ffffff;
+      border-left: 5px solid #2e8b57;
+      border-radius: 8px;
+      margin-bottom: 12px;
+    }
+
+    .result-box h3 {
+      margin-bottom: 6px;
+      color: #1e5631;
+    }
+
+    .small {
+      font-size: 14px;
+      color: #444;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 768px) {
+      .content {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <div class="header">
+      <h1>Basic Diet Planner App</h1>
+      <p>Enter your details and get a simple daily diet plan</p>
+    </div>
+
+    <div class="content">
+      <div class="form-section">
+        <div class="form-group">
+          <label for="name">Name</label>
+          <input type="text" id="name" placeholder="Enter your name" />
+        </div>
+
+        <div class="form-group">
+          <label for="age">Age</label>
+          <input type="number" id="age" placeholder="Enter your age" />
+        </div>
+
+        <div class="form-group">
+          <label for="weight">Weight (kg)</label>
+          <input type="number" id="weight" placeholder="Enter your weight" />
+        </div>
+
+        <div class="form-group">
+          <label for="height">Height (cm)</label>
+          <input type="number" id="height" placeholder="Enter your height" />
+        </div>
+
+        <div class="form-group">
+          <label for="gender">Gender</label>
+          <select id="gender">
+            <option value="">Select gender</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="goal">Goal</label>
+          <select id="goal">
+            <option value="">Select your goal</option>
+            <option value="loss">Weight Loss</option>
+            <option value="maintain">Weight Maintain</option>
+            <option value="gain">Weight Gain</option>
+          </select>
+        </div>
+
+        <button onclick="generatePlan()">Generate Diet Plan</button>
+      </div>
+
+      <div class="result-section">
+        <h2>Your Diet Result</h2>
+        <div id="output">
+          <p class="small">Your diet plan will appear here.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function generatePlan() {
+      const name = document.getElementById("name").value.trim();
+      const age = parseInt(document.getElementById("age").value);
+      const weight = parseFloat(document.getElementById("weight").value);
+      const height = parseFloat(document.getElementById("height").value);
+      const gender = document.getElementById("gender").value;
+      const goal = document.getElementById("goal").value;
+      const output = document.getElementById("output");
+
+      if (!name || !age || !weight || !height || !gender || !goal) {
+        output.innerHTML = `<p style="color:red;">Please fill all fields correctly.</p>`;
+        return;
+      }
+
+      let bmr = 0;
+
+      if (gender === "male") {
+        bmr = 10 * weight + 6.25 * height - 5 * age + 5;
+      } else {
+        bmr = 10 * weight + 6.25 * height - 5 * age - 161;
+      }
+
+      let calories = Math.round(bmr);
+
+      if (goal === "loss") {
+        calories -= 400;
+      } else if (goal === "gain") {
+        calories += 400;
+      }
+
+      let breakfast = "";
+      let lunch = "";
+      let dinner = "";
+      let snack = "";
+
+      if (goal === "loss") {
+        breakfast = "Oats with milk, 1 boiled egg, and 1 apple";
+        lunch = "2 chapatis, grilled chicken / dal, and vegetable salad";
+        dinner = "Brown rice, soup, and mixed vegetables";
+        snack = "Green tea and roasted nuts";
+      } else if (goal === "maintain") {
+        breakfast = "Idli or dosa with sambar, and a banana";
+        lunch = "Rice, dal, vegetable curry, and curd";
+        dinner = "2 chapatis, paneer / egg curry, and salad";
+        snack = "Fruits or buttermilk";
+      } else if (goal === "gain") {
+        breakfast = "Peanut butter bread, milk, 2 eggs, and banana";
+        lunch = "Rice, chicken / paneer curry, dal, and curd";
+        dinner = "Chapati, potato curry, sprouts, and milk";
+        snack = "Dry fruits, smoothie, and boiled corn";
+      }
+
+      output.innerHTML = `
+        <div class="result-box">
+          <h3>Hello, ${name}</h3>
+          <p><strong>Estimated Daily Calories:</strong> ${calories} kcal</p>
+          <p><strong>Goal:</strong> ${goal.charAt(0).toUpperCase() + goal.slice(1)}</p>
+        </div>
+
+        <div class="result-box">
+          <h3>Breakfast</h3>
+          <p>${breakfast}</p>
+        </div>
+
+        <div class="result-box">
+          <h3>Lunch</h3>
+          <p>${lunch}</p>
+        </div>
+
+        <div class="result-box">
+          <h3>Evening Snack</h3>
+          <p>${snack}</p>
+        </div>
+
+        <div class="result-box">
+          <h3>Dinner</h3>
+          <p>${dinner}</p>
+        </div>
+
+        <p class="small">
+          Note: This is a simple educational project diet plan. For medical diet advice, consult a nutritionist.
+        </p>
+      `;
+    }
+  </script>
+
+</body>
+</html>
